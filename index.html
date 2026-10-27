@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eastland-Fairfield</title>
+  <link rel="icon" href="logo.png" type="image/png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #07070a;
+      --glass: rgba(255, 255, 255, 0.055);
+      --glass-strong: rgba(255, 255, 255, 0.09);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-glow: rgba(255, 255, 255, 0.18);
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --dim: #71717a;
+      --danger: #f87171;
+      --success: #4ade80;
+      --radius: 20px;
+      --radius-sm: 14px;
+      --sidebar: 250px;
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 900px 600px at 15% 10%, rgba(255,255,255,0.045), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 85% 80%, rgba(255,255,255,0.03), transparent 55%),
+        radial-gradient(ellipse 500px 400px at 50% 50%, rgba(255,255,255,0.02), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 420px; height: 420px;
+      background: #fff;
+      top: -120px; left: -80px;
+    }
+    .orb-2 {
+      width: 320px; height: 320px;
+      background: #e4e4e7;
+      bottom: 10%; right: -60px;
+      opacity: 0.12;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar {
+      width: var(--sidebar);
+      background: rgba(10, 10, 14, 0.65);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-right: 1px solid var(--border);
+      padding: 26px 16px;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      z-index: 20;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 4px 10px 26px;
+    }
+
+    .logo img {
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      object-fit: cover;
+      box-shadow: 0 0 0 1px var(--border), 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 14.5px;
+      letter-spacing: -0.35px;
+      line-height: 1.25;
+    }
+
+    .logo-text span {
+      display: block;
+      font-weight: 500;
+      font-size: 12px;
+      color: var(--dim);
+    }
+
+    .nav-label {
+      font-size: 10.5px;
+      font-weight: 650;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      padding: 0 12px 10px;
+      margin-top: 6px;
+    }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      width: 100%;
+    }
+
+    .nav-btn i {
+      font-size: 18px;
+      width: 22px;
+      text-align: center;
+      opacity: 0.8;
+      transition: transform 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--glass);
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .nav-btn:hover i { transform: scale(1.1); }
+
+    .nav-btn.active {
+      background: var(--glass-strong);
+      color: #fff;
+      border-color: var(--border-glow);
+      box-shadow: 0 0 20px rgba(255,255,255,0.04);
+    }
+
+    .nav-btn.active i { opacity: 1; }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .admin-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--muted);
+      font-size: 13.5px;
+      font-weight: 500;
+      border-radius: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .admin-btn i { font-size: 16px; }
+
+    .admin-btn:hover {
+      background: var(--glass-strong);
+      color: #fff;
+      border-color: var(--border-glow);
+    }
+
+    .site-main {
+      margin-left: var(--sidebar);
+      flex: 1;
+      padding: 36px 40px 110px;
+      max-width: 1200px;
+    }
+
+    .page { display: none; }
+    .page.active {
+      display: block;
+      animation: pageIn 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes pageIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-panel {
+      background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.025));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-left {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .hero-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+    }
+
+    .hero-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    .hero-sub {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .hero-stat {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px 24px;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-stat-value {
+      font-size: 26px;
+      font-weight: 750;
+      letter-spacing: -0.6px;
+      margin-top: 2px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0;
+      animation: cardIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+    }
+
+    .card:nth-child(1) { animation-delay: 0.04s; }
+    .card:nth-child(2) { animation-delay: 0.08s; }
+    .card:nth-child(3) { animation-delay: 0.12s; }
+    .card:nth-child(4) { animation-delay: 0.16s; }
+    .card:nth-child(5) { animation-delay: 0.2s; }
+    .card:nth-child(6) { animation-delay: 0.24s; }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--border-glow);
+      background: var(--glass-strong);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      background: #0e0e12;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+
+    .card:hover .card-thumb { transform: scale(1.04); }
+
+    .card-thumb-placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(145deg, #121218, #0a0a0e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dim);
+      font-size: 30px;
+      transition: color 0.2s;
+    }
+
+    .card:hover .card-thumb-placeholder { color: var(--muted); }
+
+    .card-body { padding: 14px 16px 16px; }
+
+    .card-title {
+      font-size: 14.5px;
+      font-weight: 650;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--dim);
+      margin-top: 5px;
+    }
+
+    .music-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .track {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 18px;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+      opacity: 0;
+      animation: cardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+    }
+
+    .track:nth-child(1) { animation-delay: 0.04s; }
+    .track:nth-child(2) { animation-delay: 0.08s; }
+    .track:nth-child(3) { animation-delay: 0.12s; }
+    .track:nth-child(4) { animation-delay: 0.16s; }
+    .track:nth-child(5) { animation-delay: 0.2s; }
+
+    .track:hover {
+      background: var(--glass-strong);
+      border-color: var(--border-glow);
+      transform: translateX(3px);
+    }
+
+    .track-num {
+      width: 26px;
+      text-align: center;
+      color: var(--dim);
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .track-info { flex: 1; min-width: 0; }
+
+    .track-title {
+      font-weight: 650;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-artist {
+      font-size: 12.5px;
+      color: var(--dim);
+      margin-top: 1px;
+    }
+
+    .play-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.07);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .play-btn:hover {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+      transform: scale(1.08);
+    }
+
+    .player {
+      position: fixed;
+      bottom: 0;
+      left: var(--sidebar);
+      right: 0;
+      height: 72px;
+      background: rgba(8, 8, 12, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 20px;
+      z-index: 30;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .player.show { transform: translateY(0); }
+
+    .player-info { flex: 1; min-width: 0; }
+
+    .player-title {
+      font-size: 14px;
+      font-weight: 650;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-artist {
+      font-size: 12px;
+      color: var(--dim);
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      transition: all 0.15s;
+    }
+
+    .player-btn:hover { color: #fff; }
+
+    .player-btn.main {
+      width: 42px;
+      height: 42px;
+      background: #fff;
+      color: #000;
+      font-size: 16px;
+      box-shadow: 0 4px 16px rgba(255,255,255,0.15);
+    }
+
+    .player-btn.main:hover { transform: scale(1.08); }
+
+    .empty-panel {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 70px 30px;
+      text-align: center;
+      color: var(--dim);
+      animation: pageIn 0.4s ease;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+    }
+
+    .empty-panel i {
+      font-size: 40px;
+      margin-bottom: 14px;
+      display: block;
+      opacity: 0.4;
+    }
+
+    .empty-panel p {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .empty-panel span {
+      display: block;
+      font-size: 13px;
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+
+    .admin-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0);
+      backdrop-filter: blur(0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.28s ease;
+    }
+
+    .admin-modal.show {
+      opacity: 1;
+      pointer-events: auto;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(12px);
+    }
+
+    .admin-box {
+      background: rgba(16, 16, 20, 0.92);
+      backdrop-filter: blur(30px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 30px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+      transform: scale(0.93) translateY(16px);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .admin-modal.show .admin-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .admin-box h2 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 22px;
+    }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-group label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 550;
+      color: var(--muted);
+      margin-bottom: 7px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="password"],
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--border-glow);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+    }
+
+    .form-group input.error {
+      border-color: var(--danger);
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .form-group input[type="file"] {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .error-msg, .success-msg {
+      font-size: 12.5px;
+      margin-top: 10px;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .error-msg { color: var(--danger); }
+    .success-msg { color: var(--success); }
+
+    .error-msg.show, .success-msg.show {
+      display: flex;
+      animation: pageIn 0.2s ease;
+    }
+
+    .btn {
+      padding: 11px 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: #fff;
+      color: #000;
+    }
+
+    .btn-primary:hover { background: #e4e4e7; }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: #fff;
+      border-color: var(--border-glow);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .tabs-admin {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 22px;
+      background: rgba(255,255,255,0.04);
+      padding: 4px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-admin {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 550;
+      transition: all 0.15s;
+    }
+
+    .tab-admin.active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .game-overlay {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease;
+    }
+
+    .game-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .game-bar {
+      height: 50px;
+      background: rgba(12,12,16,0.95);
+      backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+      transform: translateY(-100%);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .game-overlay.show .game-bar { transform: translateY(0); }
+
+    .game-bar button {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .game-bar button:hover {
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+
+    .game-bar span {
+      font-weight: 650;
+      font-size: 14px;
+    }
+
+    .game-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: #000;
+    }
+
+    @media (max-width: 800px) {
+      .sidebar { width: 72px; padding: 18px 10px; }
+      .logo-text, .nav-btn span, .admin-btn span, .nav-label { display: none; }
+      .nav-btn, .admin-btn { justify-content: center; padding: 12px; }
+      .site-main { margin-left: 72px; padding: 24px 18px 100px; }
+      .player { left: 72px; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+      .hero-inner { flex-direction: column; align-items: flex-start; }
+      .hero-stat { text-align: center; width: 100%; }
+    }
+
+    .admin-box { max-height: 90vh; overflow-y: auto; }
+    .admin-box textarea, .admin-box select, .admin-box input[type=email], .admin-box input[type=search] {
+      width: 100%; padding: 12px 14px; background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border); border-radius: 12px; color: var(--text);
+      font-size: 14px; font-family: inherit; outline: none;
+    }
+    .admin-box textarea { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; min-height: 180px; resize: vertical; }
+    .admin-box select option { background: #111; }
+    .admin-box textarea:focus, .admin-box select:focus, .admin-box input:focus { border-color: var(--border-glow); }
+    .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 6px; max-height: 150px; overflow-y: auto; margin-top: 8px; padding: 6px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,0.03); }
+    .icon-grid button { aspect-ratio: 1; border: 1px solid transparent; background: transparent; color: var(--muted); border-radius: 10px; font-size: 19px; cursor: pointer; }
+    .icon-grid button:hover { background: var(--glass-strong); color: #fff; }
+    .icon-grid button.sel { background: #fff; color: #000; }
+    .card-thumb-placeholder i { font-size: 44px; }
+    .is-hidden { display: none !important; }
+
+    .editor-wrap { position: relative; height: 280px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #1e1e1e; }
+    .editor { height: 100%; width: 100%; }
+    .editor-wrap.fs { position: fixed; inset: 0; height: auto; z-index: 300; border-radius: 0; border: none; }
+    .fs-btn { position: absolute; top: 8px; right: 24px; z-index: 10; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; border-radius: 8px; padding: 6px 9px; cursor: pointer; font-size: 14px; }
+    .fs-btn:hover { background: rgba(255,255,255,0.2); }
+    .fmt-btn { position: absolute; top: 8px; right: 62px; z-index: 10; background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #fff; border-radius: 8px; padding: 6px 9px; cursor: pointer; font-size: 14px; }
+    .fmt-btn:hover { background: rgba(255,255,255,0.2); }
+    .site-stats { display: flex; flex-direction: column; gap: 8px; padding: 0 6px 14px; font-size: 12.5px; color: var(--muted); }
+    .stat-row { display: flex; align-items: center; gap: 8px; }
+    .stat-row b { margin-left: auto; color: #fff; font-weight: 650; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); flex: none; }
+    @media (max-width: 800px) { .stat-label { display: none; } .stat-row { flex-direction: column; gap: 2px; font-size: 11px; } .stat-row b { margin-left: 0; } .live-dot { display: none; } }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="logo.png" alt="Logo">
+        <div class="logo-text">
+          Eastland
+          <span>Fairfield</span>
+        </div>
+      </div>
+
+      <div class="nav-label">Browse</div>
+      <nav class="nav">
+        <button class="nav-btn active" data-page="games">
+          <i class="bi bi-controller"></i>
+          <span>Games</span>
+        </button>
+        <button class="nav-btn" data-page="music">
+          <i class="bi bi-music-note-beamed"></i>
+          <span>Music</span>
+        </button>
+        <button class="nav-btn" data-page="movies">
+          <i class="bi bi-film"></i>
+          <span>Movies</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="site-stats">
+          <div class="stat-row"><span class="live-dot"></span><i class="bi bi-people"></i><span class="stat-label">Online</span><b id="onlineCount">0</b></div>
+          <div class="stat-row"><i class="bi bi-eye"></i><span class="stat-label">Visits</span><b id="visitCount">0</b></div>
+        </div>
+        <button class="admin-btn" id="adminOpen">
+          <i class="bi bi-shield-lock"></i>
+          <span>Admin</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="site-main">
+      <section class="page active" id="games">
+        <div class="hero-panel">
+          <div class="hero-inner">
+            <div class="hero-left">
+              <div class="hero-icon"><i class="bi bi-controller"></i></div>
+              <div>
+                <div class="hero-title">Games</div>
+                <div class="hero-sub">Play HTML games right in your browser</div>
+              </div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-label">Available</div>
+              <div class="hero-stat-value" id="gameCount">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="grid" id="gamesGrid"></div>
+      </section>
+
+      <section class="page" id="music">
+        <div class="hero-panel">
+          <div class="hero-inner">
+            <div class="hero-left">
+              <div class="hero-icon"><i class="bi bi-music-note-beamed"></i></div>
+              <div>
+                <div class="hero-title">Music</div>
+                <div class="hero-sub">Your personal library</div>
+              </div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-label">Tracks</div>
+              <div class="hero-stat-value" id="musicCount">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="music-list" id="musicList"></div>
+      </section>
+
+      <section class="page" id="movies">
+        <div class="hero-panel">
+          <div class="hero-inner">
+            <div class="hero-left">
+              <div class="hero-icon"><i class="bi bi-film"></i></div>
+              <div>
+                <div class="hero-title">Movies</div>
+                <div class="hero-sub">Coming soon</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-panel">
+          <i class="bi bi-film"></i>
+          <p>No movies yet</p>
+          <span>This section is under construction</span>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="player" id="player">
+    <div class="player-info">
+      <div class="player-title" id="playerTitle">—</div>
+      <div class="player-artist" id="playerArtist">—</div>
+    </div>
+    <div class="player-controls">
+      <button class="player-btn" id="prevBtn"><i class="bi bi-skip-start-fill"></i></button>
+      <button class="player-btn main" id="playPauseBtn"><i class="bi bi-play-fill"></i></button>
+      <button class="player-btn" id="nextBtn"><i class="bi bi-skip-end-fill"></i></button>
+    </div>
+  </div>
+
+  <div class="admin-modal" id="adminModal">
+    <div class="admin-box">
+      <div id="loginView">
+        <h2>Admin Login</h2>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="adminPass" placeholder="Enter password">
+          <div class="error-msg" id="loginError"><i class="bi bi-exclamation-circle"></i><span>Wrong password</span></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="loginBtn">Login</button>
+          <button class="btn btn-ghost" id="closeAdmin">Cancel</button>
+        </div>
+      </div>
+
+      <div id="adminView" style="display:none">
+        <h2>Admin Panel</h2>
+        <div class="tabs-admin">
+          <button class="tab-admin active" data-tab="addGame">Add Game</button>
+          <button class="tab-admin" data-tab="addMusic">Add Music</button>
+          <button class="tab-admin" data-tab="editTab">Edit</button>
+        </div>
+        <div class="error-msg" id="adminErr"><i class="bi bi-exclamation-circle"></i><span></span></div>
+        <div class="success-msg" id="adminOk"><i class="bi bi-check-circle"></i><span></span></div>
+
+        <div id="addGame">
+          <div class="form-group"><label>Title</label><input type="text" id="gameTitle" placeholder="Game name"></div>
+          <div class="form-group"><label>Thumbnail (optional)</label><input type="file" id="gameThumb" accept="image/*"></div>
+          <div class="form-group"><label>Game HTML code</label><div class="editor-wrap" id="gameEdWrap"><button type="button" class="fmt-btn" data-ed="game" title="Format code"><i class="bi bi-braces"></i></button><button type="button" class="fs-btn" data-wrap="gameEdWrap" title="Fullscreen"><i class="bi bi-arrows-fullscreen"></i></button><div class="editor" id="gameEd"></div></div></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveGame">Save Game</button>
+            <button class="btn btn-ghost" id="logoutBtn">Logout</button>
+          </div>
+        </div>
+
+        <div id="addMusic" style="display:none">
+          <div class="form-group"><label>Title</label><input type="text" id="musicTitle" placeholder="Track name"></div>
+          <div class="form-group"><label>Artist</label><input type="text" id="musicArtist" placeholder="Artist"></div>
+          <div class="form-group"><label>Audio file (max 20MB)</label><input type="file" id="musicFile" accept="audio/*"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="saveMusic">Save Track</button>
+            <button class="btn btn-ghost" id="logoutBtn2">Logout</button>
+          </div>
+        </div>
+
+        <div id="editTab" style="display:none">
+          <div class="form-group"><label>What do you want to edit?</label>
+            <select id="edKind"><option value="games">Games</option><option value="music">Music</option></select>
+          </div>
+          <div class="form-group"><label>Item</label><select id="edItem"></select></div>
+          <div id="edFields" class="is-hidden">
+            <div class="form-group"><label>Title</label><input type="text" id="edTitle"></div>
+            <div class="form-group" id="edArtistWrap"><label>Artist</label><input type="text" id="edArtist"></div>
+            <div id="edGameFields">
+              <div class="form-group"><label>Icon</label><div id="edIconPick"></div></div>
+              <div class="form-group"><label>Replace thumbnail (optional)</label><input type="file" id="edThumb" accept="image/*"></div>
+              <div class="form-group"><label>Game HTML code</label><div class="editor-wrap" id="edEdWrap"><button type="button" class="fmt-btn" data-ed="edit" title="Format code"><i class="bi bi-braces"></i></button><button type="button" class="fs-btn" data-wrap="edEdWrap" title="Fullscreen"><i class="bi bi-arrows-fullscreen"></i></button><div class="editor" id="edEd"></div></div></div>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="edSave">Save Changes</button>
+              <button class="btn btn-ghost" id="edDelete" style="color:var(--danger)">Delete</button>
+              <button class="btn btn-ghost" id="logoutBtn3">Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="game-overlay" id="gameOverlay">
+    <div class="game-bar">
+      <button id="closeGame"><i class="bi bi-arrow-left"></i> Back</button>
+      <span id="gameName"></span>
+    </div>
+    <iframe class="game-frame" id="gameFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emmet-monaco-es@5.3.1/dist/emmet-monaco.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
+  <script>
+    const SUPABASE_URL = "https://xoomzinwurnnefbeqkoc.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_KcVcNbp_xV7jPl7XUL9pEQ_wbv3Z6gP";
+    const ADMIN_EMAIL = "admin@ef.com";
+
+    const sb = SUPABASE_URL.startsWith("https://") ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+    let games = [], music = [];
+    let currentTrack = 0, isPlaying = false;
+    const audio = new Audio();
+
+    const ICONS = `controller joystick dpad trophy trophy-fill award award-fill star star-fill heart heart-fill lightning-charge lightning fire lightbulb puzzle dice-1 dice-2 dice-3 dice-4 dice-5 dice-6 flag globe map compass car-front airplane bicycle bus-front train-front truck moon sun cloud snow umbrella tree flower1 bug emoji-smile emoji-sunglasses emoji-laughing robot cpu code-slash terminal braces keyboard mouse display laptop phone tablet camera film tv play-circle mic speaker volume-up vinyl disc music-note music-note-beamed music-note-list headphones boombox soundwave bullseye crosshair shield shield-check lock key gem coin cash cart bag gift balloon cake cup-hot cup-straw basket bell bookmark book journal pencil brush palette scissors hammer tools wrench gear rulers calculator clock stopwatch hourglass calendar house building pin-map geo-alt people person person-arms-up hand-thumbs-up eye ghost droplet wind tornado rainbow stars magic speedometer speedometer2 graph-up bar-chart pie-chart activity suit-spade suit-heart suit-club suit-diamond chat envelope send share download upload cloud-lightning boxes box grid layers triangle square circle hexagon`.split(/\s+/);
+
+    function makeIconPicker(mountId) {
+      const mount = $(mountId);
+      const state = { value: "" };
+      mount.innerHTML = `<input type="search" placeholder="Search icons or type a Bootstrap icon name"><div class="icon-grid"></div>`;
+      const input = mount.querySelector("input"), grid = mount.querySelector(".icon-grid");
+      function draw() {
+        const q = input.value.trim().toLowerCase().replace(/^bi-/, "");
+        const list = ICONS.filter(n => n.includes(q));
+        if (q && !list.includes(q)) list.unshift(q);
+        grid.innerHTML = list.map(n => `<button type="button" title="${n}" data-n="${n}" class="${n === state.value ? "sel" : ""}"><i class="bi bi-${n}"></i></button>`).join("");
+      }
+      grid.addEventListener("click", e => {
+        const b = e.target.closest("button"); if (!b) return;
+        state.value = state.value === b.dataset.n ? "" : b.dataset.n;
+        draw();
+      });
+      input.addEventListener("input", draw);
+      state.set = v => { state.value = v || ""; input.value = ""; draw(); };
+      draw();
+      return state;
+    }
+    const edIcon = makeIconPicker("edIconPick");
+
+    async function loadAll() {
+      if (!sb) { renderGames(); renderMusic(); return; }
+      const [g, m] = await Promise.all([
+        sb.from("games").select("*").order("created_at", { ascending: true }),
+        sb.from("music").select("*").order("created_at", { ascending: true })
+      ]);
+      games = g.data || []; music = m.data || [];
+      renderGames(); renderMusic(); refreshEditList();
+    }
+
+    function updateCounts() {
+      $("gameCount").textContent = games.length;
+      $("musicCount").textContent = music.length;
+    }
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        $(btn.dataset.page).classList.add("active");
+      });
+    });
+
+    function renderGames() {
+      const grid = $("gamesGrid");
+      updateCounts();
+      if (!games.length) {
+        grid.innerHTML = `<div class="empty-panel" style="grid-column: 1 / -1"><i class="bi bi-controller"></i><p>No games yet</p><span>Add some from the Admin panel</span></div>`;
+        return;
+      }
+      grid.innerHTML = games.map(g => `
+        <div class="card" data-id="${g.id}">
+          ${g.thumb ? `<img class="card-thumb" src="${esc(g.thumb)}" alt="${esc(g.title)}">`
+            : `<div class="card-thumb-placeholder"><i class="bi bi-${esc(g.icon || "controller")}"></i></div>`}
+          <div class="card-body">
+            <div class="card-title">${esc(g.title)}</div>
+          </div>
+        </div>`).join("");
+      grid.querySelectorAll(".card").forEach(card => card.addEventListener("click", () => {
+        const g = games.find(x => x.id == card.dataset.id); if (!g) return;
+        $("gameName").textContent = g.title;
+        $("gameFrame").srcdoc = g.html;
+        $("gameOverlay").classList.add("show");
+      }));
+    }
+
+    function renderMusic() {
+      const list = $("musicList");
+      updateCounts();
+      if (!music.length) {
+        list.innerHTML = `<div class="empty-panel"><i class="bi bi-music-note-beamed"></i><p>No tracks yet</p><span>Upload music from the Admin panel</span></div>`;
+        return;
+      }
+      list.innerHTML = music.map((t, i) => `
+        <div class="track">
+          <div class="track-num">${String(i + 1).padStart(2, "0")}</div>
+          <div class="track-info"><div class="track-title">${esc(t.title)}</div><div class="track-artist">${esc(t.artist || "Unknown")}</div></div>
+          <button class="play-btn" data-index="${i}"><i class="bi bi-play-fill"></i></button>
+        </div>`).join("");
+      list.querySelectorAll(".play-btn").forEach(btn => btn.addEventListener("click", () => playTrack(+btn.dataset.index)));
+    }
+
+    function setPlayIcon() { $("playPauseBtn").innerHTML = `<i class="bi bi-${isPlaying ? "pause" : "play"}-fill"></i>`; }
+
+    function playTrack(index) {
+      if (index < 0 || index >= music.length) return;
+      currentTrack = index;
+      const t = music[index];
+      audio.src = t.audio_url; audio.play(); isPlaying = true;
+      $("playerTitle").textContent = t.title;
+      $("playerArtist").textContent = t.artist || "Unknown";
+      $("player").classList.add("show");
+      setPlayIcon();
+    }
+    $("playPauseBtn").addEventListener("click", () => {
+      if (isPlaying) audio.pause(); else audio.play();
+      isPlaying = !isPlaying; setPlayIcon();
+    });
+    $("prevBtn").addEventListener("click", () => playTrack(currentTrack - 1));
+    $("nextBtn").addEventListener("click", () => playTrack(currentTrack + 1));
+    audio.addEventListener("ended", () => {
+      if (currentTrack < music.length - 1) playTrack(currentTrack + 1);
+      else { isPlaying = false; setPlayIcon(); }
+    });
+
+    const modal = $("adminModal");
+    function showAdmin(on) {
+      $("loginView").style.display = on ? "none" : "block";
+      $("adminView").style.display = on ? "block" : "none";
+    }
+    function flash(text, ok) {
+      $("adminErr").classList.remove("show"); $("adminOk").classList.remove("show");
+      const el = ok ? $("adminOk") : $("adminErr");
+      el.querySelector("span").textContent = text; el.classList.add("show");
+    }
+    function clearFlash() { $("adminErr").classList.remove("show"); $("adminOk").classList.remove("show"); }
+
+    $("adminOpen").addEventListener("click", async () => {
+      modal.classList.add("show");
+      $("loginError").classList.remove("show");
+      $("adminPass").value = "";
+      if (sb) {
+        const { data } = await sb.auth.getSession();
+        if (data.session) { showAdmin(true); return; }
+      }
+      showAdmin(false);
+      setTimeout(() => $("adminPass").focus(), 100);
+    });
+    $("closeAdmin").addEventListener("click", () => modal.classList.remove("show"));
+    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("show"); });
+
+    $("loginBtn").addEventListener("click", async () => {
+      if (!sb) { $("loginError").querySelector("span").textContent = "Add your Supabase keys first"; $("loginError").classList.add("show"); return; }
+      const { error } = await sb.auth.signInWithPassword({ email: ADMIN_EMAIL, password: $("adminPass").value });
+      if (error) { $("loginError").querySelector("span").textContent = "Wrong password"; $("loginError").classList.add("show"); return; }
+      $("loginError").classList.remove("show");
+      showAdmin(true); clearFlash();
+    });
+    $("adminPass").addEventListener("keydown", e => { if (e.key === "Enter") $("loginBtn").click(); });
+
+    ["logoutBtn", "logoutBtn2", "logoutBtn3"].forEach(id => $(id).addEventListener("click", async () => {
+      if (sb) await sb.auth.signOut();
+      modal.classList.remove("show");
+    }));
+
+    document.querySelectorAll(".tab-admin").forEach(tab => tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab-admin").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      ["addGame", "addMusic", "editTab"].forEach(id => $(id).style.display = tab.dataset.tab === id ? "block" : "none");
+      clearFlash();
+      if (tab.dataset.tab === "editTab") refreshEditList();
+    }));
+
+    function readFile(file, as) {
+      return new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); as === "text" ? fr.readAsText(file) : fr.readAsDataURL(file); });
+    }
+    async function thumbFrom(file) {
+      if (!file) return null;
+      if (file.size > 400 * 1024) { flash("Thumbnail too big (keep under 400KB)"); throw new Error("thumb"); }
+      return readFile(file);
+    }
+
+    $("saveGame").addEventListener("click", async () => {
+      clearFlash();
+      const title = $("gameTitle").value.trim(), html = (gameEd ? gameEd.getValue() : "").trim();
+      if (!title || !html) return flash("Title and HTML code required");
+      let thumb; try { thumb = await thumbFrom($("gameThumb").files[0]); } catch { return; }
+      const { error } = await sb.from("games").insert({ title, html, thumb: thumb || null });
+      if (error) return flash(error.message);
+      flash("Game saved", true);
+      $("gameTitle").value = ""; gameEd?.setValue(""); $("gameThumb").value = "";
+      loadAll();
+    });
+
+    $("saveMusic").addEventListener("click", async () => {
+      clearFlash();
+      const title = $("musicTitle").value.trim(), artist = $("musicArtist").value.trim(), file = $("musicFile").files[0];
+      if (!title || !file) return flash("Title and audio file required");
+      if (file.size > 20 * 1024 * 1024) return flash("File too big (keep under 20MB)");
+      flash("Uploading...", true);
+      const path = `${Date.now()}-${file.name.replace(/[^\w.\-]/g, "_")}`;
+      const up = await sb.storage.from("music").upload(path, file, { contentType: file.type });
+      if (up.error) return flash(up.error.message);
+      const audio_url = sb.storage.from("music").getPublicUrl(path).data.publicUrl;
+      const { error } = await sb.from("music").insert({ title, artist, audio_url });
+      if (error) return flash(error.message);
+      flash("Track saved", true);
+      $("musicTitle").value = ""; $("musicArtist").value = ""; $("musicFile").value = "";
+      loadAll();
+    });
+
+    const edList = () => $("edKind").value === "games" ? games : music;
+
+    function refreshEditList() {
+      const sel = $("edItem"), keep = sel.value;
+      sel.innerHTML = `<option value="">Select...</option>` + edList().map(x => `<option value="${x.id}">${esc(x.title)}</option>`).join("");
+      if (edList().some(x => String(x.id) === keep)) sel.value = keep;
+      fillEditFields();
+    }
+
+    function fillEditFields() {
+      const item = edList().find(x => String(x.id) === $("edItem").value);
+      $("edFields").classList.toggle("is-hidden", !item);
+      const isGame = $("edKind").value === "games";
+      $("edGameFields").classList.toggle("is-hidden", !isGame);
+      $("edArtistWrap").classList.toggle("is-hidden", isGame);
+      if (!item) return;
+      $("edTitle").value = item.title;
+      if (isGame) { edEd?.setValue(item.html); edIcon.set(item.icon); $("edThumb").value = ""; }
+      else $("edArtist").value = item.artist || "";
+    }
+    $("edKind").addEventListener("change", () => { $("edItem").value = ""; refreshEditList(); clearFlash(); });
+    $("edItem").addEventListener("change", () => { fillEditFields(); clearFlash(); });
+
+    $("edSave").addEventListener("click", async () => {
+      clearFlash();
+      const id = $("edItem").value, title = $("edTitle").value.trim();
+      if (!id || !title) return flash("Title required");
+      let res;
+      if ($("edKind").value === "games") {
+        const html = (edEd ? edEd.getValue() : "").trim();
+        if (!html) return flash("HTML code required");
+        const upd = { title, html, icon: edIcon.value || null };
+        try { const t = await thumbFrom($("edThumb").files[0]); if (t) upd.thumb = t; } catch { return; }
+        res = await sb.from("games").update(upd).eq("id", id);
+      } else {
+        res = await sb.from("music").update({ title, artist: $("edArtist").value.trim() }).eq("id", id);
+      }
+      if (res.error) return flash(res.error.message);
+      flash("Changes saved", true);
+      loadAll();
+    });
+
+    $("edDelete").addEventListener("click", async () => {
+      const id = $("edItem").value; if (!id || !confirm("Delete this permanently?")) return;
+      const kind = $("edKind").value, item = edList().find(x => String(x.id) === id);
+      if (kind === "music" && item.audio_url.includes("/music/")) {
+        await sb.storage.from("music").remove([decodeURIComponent(item.audio_url.split("/music/").pop())]);
+      }
+      const { error } = await sb.from(kind).delete().eq("id", id);
+      if (error) return flash(error.message);
+      $("edItem").value = ""; flash("Deleted", true); loadAll();
+    });
+
+    $("closeGame").addEventListener("click", () => {
+      $("gameOverlay").classList.remove("show");
+      setTimeout(() => { $("gameFrame").srcdoc = ""; }, 280);
+    });
+
+    let gameEd = null, edEd = null;
+    const MON = "https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min";
+    window.MonacoEnvironment = {
+      getWorkerUrl: () => URL.createObjectURL(new Blob(
+        [`self.MonacoEnvironment={baseUrl:'${MON}/'};importScripts('${MON}/vs/base/worker/workerMain.js');`],
+        { type: "text/javascript" }))
+    };
+    require.config({ paths: { vs: MON + "/vs" } });
+    require(["vs/editor/editor.main"], () => {
+      let emmetOk = false;
+      try { if (window.emmetMonaco) { emmetMonaco.emmetHTML(monaco); emmetOk = true; } } catch (e) { console.warn("emmet", e); }
+      const BOILER = '<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>${1:Game}</title>\n  <style>\n    $2\n  </style>\n</head>\n<body>\n  $0\n  <script>\n    \n  <\/script>\n</body>\n</html>';
+      const VOIDS = new Set("area base br col embed hr img input link meta param source track wbr".split(" "));
+      const BLOCK = new Set("html head body ul ol table thead tbody tfoot tr select form nav header footer main section article aside dl details datalist colgroup".split(" "));
+      const TAGS = ("html head body title meta link style script noscript base header nav main section article aside footer h1 h2 h3 h4 h5 h6 hgroup address div span p a em strong small s cite q dfn abbr ruby rt rp data time code var samp kbd sub sup i b u mark bdi bdo br wbr ins del picture source img iframe embed object param video audio track map area svg math canvas table caption colgroup col tbody thead tfoot tr td th form fieldset legend label input button select datalist optgroup option textarea output progress meter details summary dialog menu slot template ul ol li dl dt dd figure figcaption blockquote pre hr center font marquee").split(" ");
+      const SPECIAL = {
+        a: '<a href="$1">$0<\/a>', img: '<img src="$1" alt="$2">', link: '<link rel="stylesheet" href="$1">',
+        script: '<script>\n\t$0\n<\/script>', style: '<style>\n\t$0\n<\/style>', meta: '<meta name="$1" content="$2">',
+        input: '<input type="$1" id="$2" placeholder="$3">', button: '<button onclick="$1">$0<\/button>',
+        div: '<div class="$1">$0<\/div>', span: '<span class="$1">$0<\/span>', canvas: '<canvas id="$1" width="$2" height="$3"><\/canvas>',
+        ul: '<ul>\n\t<li>$0<\/li>\n<\/ul>', ol: '<ol>\n\t<li>$0<\/li>\n<\/ol>', select: '<select id="$1">\n\t<option value="$2">$0<\/option>\n<\/select>',
+        form: '<form action="$1" method="$2">\n\t$0\n<\/form>', iframe: '<iframe src="$1"><\/iframe>',
+        video: '<video src="$1" controls><\/video>', audio: '<audio src="$1" controls><\/audio>', label: '<label for="$1">$0<\/label>',
+        table: '<table>\n\t<tr>\n\t\t<td>$0<\/td>\n\t<\/tr>\n<\/table>', textarea: '<textarea id="$1" rows="$2" cols="$3">$0<\/textarea>'
+      };
+      const ATTRS = "class id style title lang dir hidden tabindex draggable contenteditable spellcheck translate role accesskey src href alt width height type value name placeholder rel target action method enctype min max step maxlength minlength pattern for charset content viewport http-equiv media srcset sizes crossorigin integrity loading poster preload cols rows colspan rowspan wrap download hreflang referrerpolicy sandbox allow allowfullscreen autocomplete autofocus autoplay controls loop muted playsinline disabled checked selected required readonly multiple async defer novalidate open label list form accept data-* aria-label aria-hidden aria-live onclick ondblclick onchange oninput onsubmit onload onerror onfocus onblur onkeydown onkeyup onkeypress onmousedown onmouseup onmouseover onmouseout onmousemove oncontextmenu onwheel onscroll onresize ontouchstart ontouchend ontouchmove ondrag ondrop ondragover onplay onpause onended".split(" ");
+      const BOOLS = new Set("hidden async defer disabled checked selected required readonly multiple controls autoplay loop muted playsinline autofocus allowfullscreen novalidate open".split(" "));
+      const CIK = monaco.languages.CompletionItemKind, SNIP = monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet;
+
+      function openTags(txt) {
+        txt = txt.replace(/(<(script|style)\b[^>]*>)[\s\S]*?(<\/\2>)/gi, "$1$3");
+        const st = [], re = /<!--[\s\S]*?-->|<(\/?)([a-zA-Z][\w-]*)\b[^>]*?(\/?)>/g; let m;
+        while ((m = re.exec(txt))) {
+          if (m[0].startsWith("<!--")) continue;
+          const n = m[2].toLowerCase();
+          if (VOIDS.has(n) || m[3]) continue;
+          if (m[1]) { const i = st.lastIndexOf(n); if (i > -1) st.length = i; } else st.push(n);
+        }
+        return st;
+      }
+
+      monaco.languages.registerCompletionItemProvider("html", {
+        triggerCharacters: ["<", "/", "!", " ", ":"],
+        provideCompletionItems: (model, pos) => {
+          const text = model.getValueInRange({ startLineNumber: 1, startColumn: 1, endLineNumber: pos.lineNumber, endColumn: pos.column });
+          const line = model.getLineContent(pos.lineNumber).slice(0, pos.column - 1);
+          const mk = (range, label, text2, filter, kind, detail, sort) => ({ label, kind, insertText: text2, insertTextRules: SNIP, filterText: filter, detail, sortText: sort, range, documentation: { value: "```html\n" + text2.replace(/\$\{\d+:([^}]*)\}/g, "$1").replace(/\$\d+/g, "") + "\n```" } });
+          const rng = len => ({ startLineNumber: pos.lineNumber, endLineNumber: pos.lineNumber, startColumn: pos.column - len, endColumn: pos.column });
+
+          const inBlock = tag => { const o = text.lastIndexOf("<" + tag), c = text.lastIndexOf("</" + tag); return o > c && text.indexOf(">", o) !== -1; };
+          const blockTag = inBlock("script") ? "script" : inBlock("style") ? "style" : null;
+          if (blockTag) {
+            const m = line.match(/<\/?[\w]*$/);
+            if (m && m[0].startsWith("</")) return { suggestions: [mk(rng(m[0].length), `</${blockTag}>`, `</${blockTag}>`, `</${blockTag}`, CIK.Property, "close tag", "0")] };
+            return { suggestions: [] };
+          }
+
+          const lt = text.lastIndexOf("<"), gt = text.lastIndexOf(">");
+          if (lt > gt && /^<[a-zA-Z][\w-]*\s/.test(text.slice(lt))) {
+            if ((text.slice(lt).match(/"/g) || []).length % 2 === 1) return { suggestions: [] };
+            const w = (line.match(/[\w:-]*$/) || [""])[0];
+            return { suggestions: ATTRS.map(a => {
+              const base = a === "data-*" ? 'data-$1="$2"' : BOOLS.has(a) ? a : `${a}="$1"`;
+              return mk(rng(w.length), a, base, a, CIK.Property, "attribute", "0" + a);
+            }) };
+          }
+
+          const m = line.match(/(<\/?[\w!:-]*|!)$/) || line.match(/\w*$/);
+          const pre = m ? m[0] : "", lead = pre.startsWith("<");
+
+          if (pre.startsWith("</")) {
+            const st = openTags(text.slice(0, text.length - pre.length)).reverse();
+            return { suggestions: st.map((t, i) => mk(rng(pre.length), `</${t}>`, `</${t}>`, `</${t}`, CIK.Property, "close tag", "0" + i)) };
+          }
+
+          const out = [];
+          if (!emmetOk) out.push(mk(rng(pre.length), "!", BOILER, pre === "!" ? "!" : lead ? "<!html5" : "html5 !", CIK.Snippet, "full page template", "00"));
+          out.push(mk(rng(pre.length), "<!DOCTYPE html>", "<!DOCTYPE html>", lead ? "<!DOCTYPE" : "doctype", CIK.Snippet, "doctype", "01"));
+          out.push(mk(rng(pre.length), "<!-- comment -->", "<!-- $0 -->", lead ? "<!--" : "comment", CIK.Snippet, "comment", "02"));
+          TAGS.forEach(t => {
+            const snip = SPECIAL[t] || (VOIDS.has(t) ? `<${t}>` : BLOCK.has(t) ? `<${t}>\n\t$0\n</${t}>` : `<${t}>$0</${t}>`);
+            out.push(mk(rng(pre.length), lead ? `<${t}>` : t, snip, lead ? "<" + t : t, CIK.Keyword, "HTML element", "1" + t));
+          });
+          return { suggestions: out };
+        }
+      });
+      const VOID = "area base br col embed hr img input link meta param source track wbr".split(" ");
+      function make(id) {
+        const ed = monaco.editor.create($(id), {
+          value: "", language: "html", theme: "vs-dark", automaticLayout: true, fontSize: 13, tabSize: 2,
+          minimap: { enabled: true }, wordWrap: "on", autoClosingBrackets: "always", autoClosingQuotes: "always",
+          autoIndent: "full", formatOnPaste: true, bracketPairColorization: { enabled: true },
+          quickSuggestions: { other: true, comments: false, strings: true }, suggestOnTriggerCharacters: true,
+          scrollBeyondLastLine: false, padding: { top: 10 }, tabCompletion: "on", snippetSuggestions: "top", acceptSuggestionOnEnter: "on", linkedEditing: true, formatOnType: true, formatOnPaste: true, folding: true, guides: { bracketPairs: true, indentation: true }, stickyScroll: { enabled: true }, smoothScrolling: true, cursorSmoothCaretAnimation: "on", renderWhitespace: "selection", colorDecorators: true, matchBrackets: "always", autoClosingOvertype: "always", autoSurround: "languageDefined", wordBasedSuggestions: "currentDocument", suggest: { showInlineDetails: true, showStatusBar: true, preview: true, showIcons: true }, hover: { enabled: true }, occurrencesHighlight: "singleFile", selectionHighlight: true, renameOnType: true
+        });
+        ed.onDidType(t => {
+          if (t !== ">") return;
+          const pos = ed.getPosition(), before = ed.getModel().getLineContent(pos.lineNumber).slice(0, pos.column - 1);
+          const m = before.match(/<([a-zA-Z][\w-]*)(?:\s[^<>]*)?>$/);
+          if (!m || VOID.includes(m[1].toLowerCase()) || before.endsWith("/>")) return;
+          ed.executeEdits("autoclose", [{ range: new monaco.Range(pos.lineNumber, pos.column, pos.lineNumber, pos.column), text: `</${m[1]}>` }]);
+          ed.setPosition(pos);
+        });
+        return ed;
+      }
+      gameEd = make("gameEd");
+      edEd = make("edEd");
+      fillEditFields();
+    });
+
+    document.querySelectorAll(".fmt-btn").forEach(b => b.addEventListener("click", () => {
+      const ed = b.dataset.ed === "game" ? gameEd : edEd;
+      if (ed) ed.getAction("editor.action.formatDocument").run();
+    }));
+    let fsWrap = null, fsParent = null, fsNext = null;
+    function exitFs() {
+      if (!fsWrap) return;
+      fsWrap.classList.remove("fs");
+      fsParent.insertBefore(fsWrap, fsNext);
+      fsWrap.querySelector(".fs-btn i").className = "bi bi-arrows-fullscreen";
+      fsWrap = null;
+    }
+    document.querySelectorAll(".fs-btn").forEach(b => b.addEventListener("click", () => {
+      const w = $(b.dataset.wrap);
+      if (fsWrap === w) return exitFs();
+      fsWrap = w; fsParent = w.parentNode; fsNext = w.nextSibling;
+      document.body.appendChild(w);
+      w.classList.add("fs");
+      b.querySelector("i").className = "bi bi-fullscreen-exit";
+    }));
+    document.addEventListener("keydown", e => { if (e.key === "Escape") exitFs(); });
+
+    async function startCounters() {
+      if (!sb) return;
+      try {
+        let visits;
+        if (!sessionStorage.getItem("ef_visited")) {
+          const r = await sb.rpc("increment_visits");
+          visits = r.data; sessionStorage.setItem("ef_visited", "1");
+        } else {
+          const r = await sb.from("site_stats").select("visits").eq("id", 1).single();
+          visits = r.data && r.data.visits;
+        }
+        $("visitCount").textContent = Number(visits || 0).toLocaleString();
+      } catch (e) { console.warn("visits", e); }
+      try {
+        const ch = sb.channel("online-users", { config: { presence: { key: crypto.randomUUID() } } });
+        ch.on("presence", { event: "sync" }, () => {
+          $("onlineCount").textContent = Object.keys(ch.presenceState()).length;
+        }).subscribe(async st => { if (st === "SUBSCRIBED") await ch.track({ at: Date.now() }); });
+      } catch (e) { console.warn("online", e); }
+    }
+
+    loadAll();
+    startCounters();
+  </script>
+</body>
+</html>
